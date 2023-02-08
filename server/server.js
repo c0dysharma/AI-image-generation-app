@@ -6,10 +6,10 @@ import app from './app.js';
 
 mongoose.set('strictQuery', true);
 
-// const db = process.env.DB_REMOTE_URL;
-// mongoose.connect(db).then(() => {
-//   console.log('Connection to DB successful.');
-// });
+const db = process.env.DB_REMOTE_URL;
+mongoose.connect(db).then(() => {
+  console.log('Connection to DB successful.');
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
