@@ -4,13 +4,18 @@
   "description": "",
   "type": "module",
   "main": "index.js",
+  "engines": {
+    "node": ">=19.3.0"
+  },
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "NODE_ENV=devlopment nodemon server.js",
+    "prod": "NODE_ENV=production node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cloudinary": "^1.33.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
@@ -21,8 +26,8 @@
   "devDependencies": {
     "eslint": "^8.33.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.27.5",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.1"
