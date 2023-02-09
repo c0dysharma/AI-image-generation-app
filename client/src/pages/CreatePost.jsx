@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 import { preview } from '../assets';
 import { getRandomPrompt } from '../utils';
 import { FormField, Loader } from '../components';
 
 const CreatePost = () => {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: '',
     prompt: '',
@@ -14,7 +17,19 @@ const CreatePost = () => {
   const [loading, setLoading] = useState(false);
   const [generatingImage, setGeneratingImage] = useState(false);
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!(form.prompt && form.name && form.photo)) return alert('Please fill the form first');
+    setLoading(true);
+    try {
+      await axios.post('http://localhost:3000/api/v1/post/', form);
+      navigate('/');
+    } catch (error) {
+      alert(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -23,6 +38,7 @@ const CreatePost = () => {
     setForm({ ...form, prompt: randomPrompt });
   };
   const generateImage = async () => {
+    if (!form.prompt) return alert("Prompt can't be empty");
     setGeneratingImage(true);
     try {
       const res = await axios.post('http://localhost:3000/api/v1/dalle/', { prompt: form.prompt });
@@ -102,7 +118,7 @@ const CreatePost = () => {
           <button
             type="submit"
             className="mt-3 text-white bg-purple font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center">
-            Share with community
+            {loading ? 'Sharing...' : 'Share with community'}
           </button>
         </div>
       </form>
