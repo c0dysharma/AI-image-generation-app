@@ -1,9 +1,9 @@
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import axios from 'axios';
 
 import { preview } from '../assets';
 import { getRandomPrompt } from '../utils';
 import { FormField, Loader } from '../components';
-import { useState } from 'react';
 
 const CreatePost = () => {
   const [form, setForm] = useState({
@@ -22,7 +22,18 @@ const CreatePost = () => {
     const randomPrompt = getRandomPrompt(form.prompt);
     setForm({ ...form, prompt: randomPrompt });
   };
-  const generateImage = () => {};
+  const generateImage = async () => {
+    setGeneratingImage(true);
+    try {
+      const res = await axios.post('http://localhost:3000/api/v1/dalle/', { prompt: form.prompt });
+      const photo = `data:image/jpeg;base64,${res.data.photo}`;
+      setForm({ ...form, photo });
+    } catch (e) {
+      alert(e);
+    } finally {
+      setGeneratingImage(false);
+    }
+  };
 
   return (
     <section className="max-w-7xl mx-auto">
@@ -79,7 +90,7 @@ const CreatePost = () => {
             type="button"
             onClick={generateImage}
             className="text-white bg-green-700 font-medium rounded-md text-sm w-full px-5 py-2.5 text-center sm:w-auto">
-            {generatingImage ? 'Generating.....' : 'Generate'}
+            {generatingImage ? 'Generating...' : form.photo ? 'Re-Generate' : 'Generate'}
           </button>
         </div>
 
