@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -5,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { preview } from '../assets';
 import { getRandomPrompt } from '../utils';
 import { FormField, Loader } from '../components';
+import { serverURI } from '../constants';
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const CreatePost = () => {
     if (!(form.prompt && form.name && form.photo)) return alert('Please fill the form first');
     setLoading(true);
     try {
-      await axios.post('http://localhost:3000/api/v1/post/', form);
+      await axios.post(`${serverURI}/api/v1/post/`, form);
       navigate('/');
     } catch (error) {
       alert(error);
@@ -41,7 +43,7 @@ const CreatePost = () => {
     if (!form.prompt) return alert("Prompt can't be empty");
     setGeneratingImage(true);
     try {
-      const res = await axios.post('http://localhost:3000/api/v1/dalle/', { prompt: form.prompt });
+      const res = await axios.post(`${serverURI}/api/v1/dalle/`, { prompt: form.prompt });
       const photo = `data:image/jpeg;base64,${res.data.photo}`;
       setForm({ ...form, photo });
     } catch (e) {

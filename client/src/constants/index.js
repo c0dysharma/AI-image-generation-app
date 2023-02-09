@@ -1,4 +1,6 @@
 // eslint-disable-next-line import/prefer-default-export
+export const serverURI = 'https://ai-image-generation-app-dall-e.onrender.com';
+
 export const surpriseMePrompts = [
   'an armchair in the shape of an avocado',
   'a surrealist dream-like oil painting by Salvador Dalí of a cat playing checkers',

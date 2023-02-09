@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Loader, Card, FormField } from '../components';
+import { serverURI } from '../constants';
 
 const RenderCards = ({ data, title }) => {
   if (data.length > 0) {
@@ -20,7 +20,7 @@ const Home = () => {
 
   const fetchPosts = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/v1/post');
+      const res = await axios.get(`${serverURI}/api/v1/post`);
       if (res.data.success) setAllPosts(res.data.data.reverse());
     } catch (error) {
       alert(error);
