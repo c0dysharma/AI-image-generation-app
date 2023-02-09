@@ -1,9 +1,8 @@
 import * as dotenv from 'dotenv';
-dotenv.config();
 import mongoose from 'mongoose';
-
 import app from './app.js';
 
+dotenv.config();
 mongoose.set('strictQuery', true);
 
 const db = process.env.DB_REMOTE_URL;
