@@ -21,7 +21,7 @@ router
       const aiResponse = await openai.createImage({
         prompt,
         n: 1,
-        size: '256x256',
+        size: process.env.DALLE_IMAGE_SIZE,
         response_format: 'b64_json',
       });
 
