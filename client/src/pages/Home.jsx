@@ -15,21 +15,40 @@ const Home = () => {
   const [allPosts, setAllPosts] = useState([]);
 
   const [searchText, setSearchText] = useState('');
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const [searchedResults, setSearchedResults] = useState([]);
+
+  const fetchPosts = async () => {
+    try {
+      const res = await axios.get('http://localhost:3000/api/v1/post');
+      if (res.data.success) setAllPosts(res.data.data.reverse());
+    } catch (error) {
+      alert(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     setLoading(true);
-    const fetchPosts = async () => {
-      try {
-        const res = await axios.get('http://localhost:3000/api/v1/post');
-        if (res.data.success) setAllPosts(res.data.data.reverse());
-      } catch (error) {
-        alert(error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchPosts();
   }, []);
+
+  const handleSearchChange = (e) => {
+    clearTimeout(searchTimeout);
+    setSearchText(e.target.value);
+
+    setSearchTimeout(
+      setTimeout(() => {
+        const searchResult = allPosts.filter(
+          (item) =>
+            item.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            item.prompt.toLowerCase().includes(searchText.toLowerCase())
+        );
+        setSearchedResults(searchResult);
+      }, 500)
+    );
+  };
 
   return (
     <section className="max-w-7xl mx-auto">
@@ -44,7 +63,14 @@ const Home = () => {
 
       {/* Search Area */}
       <div className="mt-16">
-        <FormField />
+        <FormField
+          labelName="Search posts"
+          type="text"
+          name="text"
+          placeholder="Search something..."
+          value={searchText}
+          handleChange={handleSearchChange}
+        />
       </div>
       <div className="mt-10">
         {/* Result Text  */}
@@ -55,7 +81,7 @@ const Home = () => {
         ) : (
           <div>
             {searchText && (
-              <h2 className="font-medium text-[#666e75]">
+              <h2 className="font-medium text-[#666e75] text-xl mb-3">
                 Showing result for <span className="text-[#222328]">{searchText}</span>
               </h2>
             )}
@@ -66,7 +92,7 @@ const Home = () => {
         {!loading && (
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2">
             {searchText ? (
-              <RenderCards data={[]} title="No search results found" />
+              <RenderCards data={searchedResults} title="No search results found" />
             ) : (
               <RenderCards data={allPosts} title="No posts found" />
             )}
