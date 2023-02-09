@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { useState } from 'react';
+import axios from 'axios';
 import { Loader, Card, FormField } from '../components';
 
 const RenderCards = ({ data, title }) => {
@@ -10,9 +12,24 @@ const RenderCards = ({ data, title }) => {
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
-  const [allPosts, setAllPosts] = useState(null);
+  const [allPosts, setAllPosts] = useState([]);
 
   const [searchText, setSearchText] = useState('');
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchPosts = async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/api/v1/post');
+        if (res.data.success) setAllPosts(res.data.data.reverse());
+      } catch (error) {
+        alert(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
 
   return (
     <section className="max-w-7xl mx-auto">
@@ -46,13 +63,15 @@ const Home = () => {
         )}
 
         {/* Result images */}
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2">
-          {searchText ? (
-            <RenderCards data={[]} title="No search results found" />
-          ) : (
-            <RenderCards data={[]} title="No posts found" />
-          )}
-        </div>
+        {!loading && (
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2">
+            {searchText ? (
+              <RenderCards data={[]} title="No search results found" />
+            ) : (
+              <RenderCards data={allPosts} title="No posts found" />
+            )}
+          </div>
+        )}
       </div>
     </section>
   );
