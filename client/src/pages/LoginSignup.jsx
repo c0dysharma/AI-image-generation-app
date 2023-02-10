@@ -1,6 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -22,10 +19,19 @@ const LeftPane = ({ loading, handleChange, handleSubmit, handleGoogleLogin, form
 
       <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
         <FormField
+          labelName="Name"
+          type="text"
+          name="name"
+          placeholder="John Doe"
+          value={form.name}
+          handleChange={handleChange}
+        />
+
+        <FormField
           labelName="Email"
           type="text"
           name="email"
-          placeholder="Enter your email"
+          placeholder="john.doe@example.com"
           value={form.email}
           handleChange={handleChange}
         />
@@ -34,7 +40,7 @@ const LeftPane = ({ loading, handleChange, handleSubmit, handleGoogleLogin, form
           labelName="Password"
           type="password"
           name="password"
-          placeholder="Enter your password"
+          placeholder="*********"
           value={form.password}
           handleChange={handleChange}
         />
@@ -117,6 +123,7 @@ const InnerWindow = ({
 const LoginSignup = ({ trigger, onBGclick, onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
+    name: '',
     email: '',
     password: '',
     rememberMe: false
