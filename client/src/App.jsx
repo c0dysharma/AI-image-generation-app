@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 
 import { logo } from './assets';
+import { serverURI } from './constants';
 import { Home, CreatePost, LoginSignup } from './pages';
 
 const ProfileIcon = ({ text, setLoginStatus, logoutBtnState, changeLogoutBtn }) => {
   const handleOnClick = () => {
     setLoginStatus(false);
+    localStorage.removeItem('token');
   };
 
   const showHideLogButton = () => {
@@ -32,12 +35,39 @@ const ProfileIcon = ({ text, setLoginStatus, logoutBtnState, changeLogoutBtn }) 
 };
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState({});
+
   const [showPopup, setShowPopup] = useState(false);
   const [logoutBtn, setLogoutBtn] = useState(false);
 
   const dismissPopup = () => setShowPopup((p) => !p);
-  const onloggedIn = (status) => setLoggedIn(status);
+
+  const loginUser = async () => {
+    const serverConfig = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    };
+    const res = await axios.get(`${serverURI}/api/v1/user/`, serverConfig);
+    setUser(res.data.data);
+    if (res.data.success) {
+      setLoggedIn(true);
+    }
+  };
+
+  const onloggedIn = async (status) => {
+    await loginUser();
+    setLoggedIn(status);
+  };
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('token')) loginUser();
+    } catch (e) {
+      alert(e);
+    }
+  }, []);
 
   return (
     <BrowserRouter>
@@ -52,7 +82,7 @@ function App() {
         {loggedIn ? (
           <div className="flex gap-4 items-center">
             <ProfileIcon
-              text="K"
+              text={user.name[0]}
               setLoginStatus={onloggedIn}
               logoutBtnState={logoutBtn}
               changeLogoutBtn={setLogoutBtn}

@@ -7,7 +7,51 @@ import { FormField, CheckBox, Loader } from '../components';
 import { google } from '../assets';
 import { serverURI } from '../constants';
 
-const LeftPane = ({ loading, handleChange, handleSubmit, handleGoogleLogin, form }) => {
+const LeftPane = ({ setLoadingState, onLogin, onPopupDismiss }) => {
+  const [action, setAction] = useState('signin');
+
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    rememberMe: false
+  });
+
+  const handleChange = (e) => {
+    if (e.target.name === 'rememberMe') setForm({ ...form, rememberMe: e.target.checked });
+    else setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoadingState(true);
+    try {
+      let res;
+      if (action === 'signin') {
+        if (form.email && form.password) {
+          res = await axios.post(`${serverURI}/api/v1/user/login`, form);
+        } else alert('Email and password is necessary');
+      } else if (action === 'signup') {
+        if (form.name && form.email && form.password) {
+          res = await axios.post(`${serverURI}/api/v1/user/signup`, form);
+        } else alert('Email, Name and password is necessary');
+      } else {
+        alert('Something went wrong.');
+      }
+
+      localStorage.setItem('token', res.data.token);
+      onLogin(true);
+    } catch (error) {
+      alert(error);
+    } finally {
+      setLoadingState(false);
+      onPopupDismiss();
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    console.log('google');
+  };
   return (
     <div className="order-1 lg:-order-1 lg:p-12">
       <h2 className="text-xl font-medium mb-4 text-center lg:text-left md:text-3xl lg:text-4xl">
@@ -18,14 +62,16 @@ const LeftPane = ({ loading, handleChange, handleSubmit, handleGoogleLogin, form
       </p>
 
       <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-        <FormField
-          labelName="Name"
-          type="text"
-          name="name"
-          placeholder="John Doe"
-          value={form.name}
-          handleChange={handleChange}
-        />
+        {action === 'signup' && (
+          <FormField
+            labelName="Name"
+            type="text"
+            name="name"
+            placeholder="John Doe"
+            value={form.name}
+            handleChange={handleChange}
+          />
+        )}
 
         <FormField
           labelName="Email"
@@ -64,7 +110,7 @@ const LeftPane = ({ loading, handleChange, handleSubmit, handleGoogleLogin, form
         type="submit"
         onClick={handleSubmit}
         className="font-medium block w-full rounded-lg bg-purple py-3 text-white mb-3 md:mb-3 lg:mb-5">
-        {loading ? 'Signing in...' : 'Sign in'}
+        {action === 'signin' ? 'Sign in' : 'Sign up'}
       </button>
 
       <button
@@ -75,12 +121,21 @@ const LeftPane = ({ loading, handleChange, handleSubmit, handleGoogleLogin, form
         Sign in with Google
       </button>
 
-      <p className="text-muted text-center text-sm">
-        Don&apos;t have an account?{' '}
-        <Link className="text-purple" to="/signup">
-          Sign up
-        </Link>{' '}
-      </p>
+      {action === 'signin' ? (
+        <p className="text-muted text-center text-sm">
+          Don&apos;t have an account?{' '}
+          <span className="text-purple cursor-pointer" onClick={() => setAction('signup')}>
+            Sign up
+          </span>
+        </p>
+      ) : (
+        <p className="text-muted text-center text-sm">
+          Already have an account?{' '}
+          <span className="text-purple cursor-pointer" onClick={() => setAction('signin')}>
+            Sign in
+          </span>
+        </p>
+      )}
     </div>
   );
 };
@@ -94,27 +149,14 @@ const RightPane = () => {
   );
 };
 
-const InnerWindow = ({
-  loading,
-  handleChange,
-  handleSubmit,
-  handleGoogleLogin,
-  form,
-  onBGclick
-}) => {
+const InnerWindow = ({ onBGclick, setLoadingState, onLogin }) => {
   return (
     <>
       <RxCross2
         className="absolute right-10 top-8 w-8 h-8 cursor-pointer z-20"
         onClick={onBGclick}
       />
-      <LeftPane
-        loading={loading}
-        handleChange={handleChange}
-        handleSubmit={handleSubmit}
-        handleGoogleLogin={handleGoogleLogin}
-        form={form}
-      />
+      <LeftPane setLoadingState={setLoadingState} onLogin={onLogin} onPopupDismiss={onBGclick} />
       <RightPane />
     </>
   );
@@ -122,36 +164,6 @@ const InnerWindow = ({
 
 const LoginSignup = ({ trigger, onBGclick, onLogin }) => {
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    rememberMe: false
-  });
-
-  const handleChange = (e) => {
-    if (e.target.name === 'rememberMe') setForm({ ...form, rememberMe: e.target.checked });
-    else setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await axios.get(`${serverURI}/api/v1/login`, form);
-      onLogin(true);
-      console.log(res.data);
-    } catch (error) {
-      alert(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = () => {
-    console.log('google');
-  };
-
   return (
     trigger && (
       <div
@@ -163,14 +175,7 @@ const LoginSignup = ({ trigger, onBGclick, onLogin }) => {
           <section
             className="text-[#2223228] overflow-hidden bg-white py-8 px-4 md:px-8 md:py-16 md:rounded-lg grid grid-cols-1 lg:grid-cols-2 lg:py-0 lg:px-0 w-full h-full max-w-5xl md:mx-20 md:h-auto relative"
             onClick={(e) => e.stopPropagation()}>
-            <InnerWindow
-              loading={loading}
-              handleChange={handleChange}
-              handleSubmit={handleSubmit}
-              handleGoogleLogin={handleGoogleLogin}
-              form={form}
-              onBGclick={onBGclick}
-            />
+            <InnerWindow setLoadingState={setLoading} onBGclick={onBGclick} onLogin={onLogin} />
           </section>
         )}
       </div>

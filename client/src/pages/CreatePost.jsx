@@ -18,13 +18,18 @@ const CreatePost = () => {
   });
   const [loading, setLoading] = useState(false);
   const [generatingImage, setGeneratingImage] = useState(false);
+  const serverConfig = {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!(form.prompt && form.name && form.photo)) return alert('Please fill the form first');
     setLoading(true);
     try {
-      await axios.post(`${serverURI}/api/v1/post/`, form);
+      await axios.post(`${serverURI}/api/v1/post/`, form, serverConfig);
       navigate('/');
     } catch (error) {
       alert(error);
@@ -43,7 +48,11 @@ const CreatePost = () => {
     if (!form.prompt) return alert("Prompt can't be empty");
     setGeneratingImage(true);
     try {
-      const res = await axios.post(`${serverURI}/api/v1/dalle/`, { prompt: form.prompt });
+      const res = await axios.post(
+        `${serverURI}/api/v1/dalle/`,
+        { prompt: form.prompt },
+        serverConfig
+      );
       const photo = `data:image/jpeg;base64,${res.data.photo}`;
       setForm({ ...form, photo });
     } catch (e) {
