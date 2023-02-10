@@ -4,6 +4,7 @@ import cors from 'cors';
 
 import dalleRoute from './routes/dalleRouter.js';
 import postRoute from './routes/postRouter.js';
+import userRoute from './routes/userRouter.js';
 
 const app = express();
 
@@ -13,5 +14,6 @@ app.use(cors());
 
 app.use('/api/v1/dalle', dalleRoute);
 app.use('/api/v1/post', postRoute);
+app.use('/api/v1/user', userRoute);
 
 export default app;

@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import express from 'express';
 import { Configuration, OpenAIApi } from 'openai';
+import validateUser from '../middlewares/authMiddleware.js';
 
 dotenv.config();
 
@@ -14,7 +15,7 @@ const router = express.Router();
 router
   .route('/')
   .get((req, res) => res.send('Hello, World from DALL-E'))
-  .post(async (req, res) => {
+  .post(validateUser, async (req, res) => {
     const { prompt } = req.body;
 
     try {

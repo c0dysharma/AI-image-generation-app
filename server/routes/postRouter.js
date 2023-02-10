@@ -2,6 +2,7 @@ import express from 'express';
 import { v2 as cloudinary } from 'cloudinary';
 
 import Post from '../models/postModel.js';
+import validateUser from '../middlewares/authMiddleware.js';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -21,7 +22,7 @@ router
       res.status(500).json({ success: false, message: error });
     }
   })
-  .post(async (req, res) => {
+  .post(validateUser, async (req, res) => {
     try {
       const { name, prompt, photo } = req.body;
       const photoUrl = await cloudinary.uploader.upload(photo);
