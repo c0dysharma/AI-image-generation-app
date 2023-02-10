@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 
 import { logo } from './assets';
-import { Home, CreatePost } from './pages';
+import { Home, CreatePost, LoginSignup } from './pages';
 
 function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
   return (
     <BrowserRouter>
       {/* Nav bar  */}
@@ -12,9 +14,9 @@ function App() {
           <img src={logo} alt="Dalle-E logo" className="w-28 object-contain" />
         </Link>
         <Link
-          to="/createPost"
+          to="/login"
           className="font-inter font-medium bg-purple text-white px-4 py-2 rounded-md">
-          Create
+          {loggedIn ? 'Create' : 'Login / Signup'}
         </Link>
       </header>
 
@@ -22,7 +24,11 @@ function App() {
       <main className="w-full min-h-[calc(100vh-73px)] bg-paleWhite px-4 py-8 sm:p-8">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/createPost" element={<CreatePost />} />
+          {loggedIn ? (
+            <Route path="/createPost" element={<CreatePost />} />
+          ) : (
+            <Route path="/login" element={<LoginSignup />} />
+          )}
         </Routes>
       </main>
     </BrowserRouter>

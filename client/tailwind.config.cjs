@@ -15,7 +15,8 @@ module.exports = {
         cardhover: '0 0 1px 0 rgba(189,192,207,0.06),0 10px 16px -1px rgba(189,192,207,0.4)'
       },
       textColor: {
-        purple: '#6469ff'
+        purple: '#6469ff',
+        muted: '#666e75'
       },
       backgroundColor: {
         purple: '#6469ff',
