@@ -5,15 +5,16 @@ import { logo } from './assets';
 import { Home, CreatePost, LoginSignup } from './pages';
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
 
   const dismissPopup = () => setShowPopup((p) => !p);
+  const onloggedIn = (status) => setLoggedIn(status);
 
   return (
     <BrowserRouter>
       {/* Login popup  */}
-      <LoginSignup trigger={showPopup} onBGclick={dismissPopup} />
+      <LoginSignup trigger={showPopup} onBGclick={dismissPopup} onLogin={onloggedIn} />
 
       {/* Nav bar  */}
       <header className="w-full flex justify-between items-center bg-white px-4 py-4 border-b border-b-[#e6ebf4] sm:px-8">
@@ -39,7 +40,7 @@ function App() {
       {/* Main section  */}
       <main className="w-full min-h-[calc(100vh-73px)] bg-paleWhite px-4 py-8 sm:p-8">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home loginState={loggedIn} unloggedDown={dismissPopup} />} />
           <Route path="/createPost" element={<CreatePost />} />
         </Routes>
       </main>

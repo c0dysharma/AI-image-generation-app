@@ -3,10 +3,12 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import { RxCross2 } from 'react-icons/all';
 
 import { FormField, CheckBox, Loader } from '../components';
 import { google } from '../assets';
+import { serverURI } from '../constants';
 
 const LeftPane = ({ loading, handleChange, handleSubmit, handleGoogleLogin, form }) => {
   return (
@@ -54,6 +56,7 @@ const LeftPane = ({ loading, handleChange, handleSubmit, handleGoogleLogin, form
 
       <button
         type="submit"
+        onClick={handleSubmit}
         className="font-medium block w-full rounded-lg bg-purple py-3 text-white mb-3 md:mb-3 lg:mb-5">
         {loading ? 'Signing in...' : 'Sign in'}
       </button>
@@ -95,13 +98,10 @@ const InnerWindow = ({
 }) => {
   return (
     <>
-      {/* Cross sign  */}
       <RxCross2
         className="absolute right-10 top-8 w-8 h-8 cursor-pointer z-20"
         onClick={onBGclick}
       />
-
-      {/* Left side form pane  */}
       <LeftPane
         loading={loading}
         handleChange={handleChange}
@@ -109,14 +109,12 @@ const InnerWindow = ({
         handleGoogleLogin={handleGoogleLogin}
         form={form}
       />
-
-      {/* Right side graphics pane  */}
       <RightPane />
     </>
   );
 };
 
-const LoginSignup = ({ trigger, onBGclick }) => {
+const LoginSignup = ({ trigger, onBGclick, onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     email: '',
@@ -129,9 +127,23 @@ const LoginSignup = ({ trigger, onBGclick }) => {
     else setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await axios.get(`${serverURI}/api/v1/login`, form);
+      onLogin(true);
+      console.log(res.data);
+    } catch (error) {
+      alert(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const handleGoogleLogin = () => {};
+  const handleGoogleLogin = () => {
+    console.log('google');
+  };
 
   return (
     trigger && (

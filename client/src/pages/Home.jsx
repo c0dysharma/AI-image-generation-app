@@ -3,14 +3,16 @@ import axios from 'axios';
 import { Loader, Card, FormField } from '../components';
 import { serverURI } from '../constants';
 
-const RenderCards = ({ data, title }) => {
+const RenderCards = ({ data, title, loginState, setShowPopup }) => {
   if (data.length > 0) {
-    return data.map((post) => <Card key={post._id} {...post} />);
+    return data.map((post) => (
+      <Card key={post._id} {...post} loginState={loginState} setShowPopup={setShowPopup} />
+    ));
   }
   return <h2 className="mt-5 font-bold text-purple text-xl uppercase">{title}</h2>;
 };
 
-const Home = () => {
+const Home = ({ loginState, unloggedDown }) => {
   const [loading, setLoading] = useState(false);
   const [allPosts, setAllPosts] = useState([]);
 
@@ -92,9 +94,19 @@ const Home = () => {
         {!loading && (
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2">
             {searchText ? (
-              <RenderCards data={searchedResults} title="No search results found" />
+              <RenderCards
+                data={searchedResults}
+                title="No search results found"
+                loginState={loginState}
+                setShowPopup={unloggedDown}
+              />
             ) : (
-              <RenderCards data={allPosts} title="No posts found" />
+              <RenderCards
+                data={allPosts}
+                title="No posts found"
+                loginState={loginState}
+                setShowPopup={unloggedDown}
+              />
             )}
           </div>
         )}

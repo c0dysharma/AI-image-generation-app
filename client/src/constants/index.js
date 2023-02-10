@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/prefer-default-export
-export const serverURI = 'https://ai-image-generation-app-dall-e.onrender.com';
+// export const serverURI = 'https://ai-image-generation-app-dall-e.onrender.com';
+export const serverURI = 'http://localhost:3000';
 
 export const surpriseMePrompts = [
   'an armchair in the shape of an avocado',
