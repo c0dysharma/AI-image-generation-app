@@ -1,15 +1,17 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Link, Route, Routes, useNavigate } from 'react-router-dom';
 
 import { logo } from './assets';
 import { serverURI } from './constants';
 import { Home, CreatePost, LoginSignup } from './pages';
 
 const ProfileIcon = ({ text, setLoginStatus, logoutBtnState, changeLogoutBtn }) => {
+  const navigate = useNavigate();
   const handleOnClick = () => {
     setLoginStatus(false);
     localStorage.removeItem('token');
+    navigate('/');
   };
 
   const showHideLogButton = () => {
@@ -108,8 +110,13 @@ function App() {
         className="w-full min-h-[calc(100vh-73px)] bg-paleWhite px-4 py-8 sm:p-8"
         onClick={() => setLogoutBtn(false)}>
         <Routes>
-          <Route path="/" element={<Home loginState={loggedIn} unloggedDown={dismissPopup} />} />
-          <Route path="/createPost" element={<CreatePost />} />
+          <Route path="*" element={<div>Requested Resource not found or unauthorised.</div>} />
+          <Route
+            path="/"
+            exact
+            element={<Home loginState={loggedIn} unloggedDown={dismissPopup} />}
+          />
+          {loggedIn && <Route exact path="/createPost" element={<CreatePost />} />}
         </Routes>
       </main>
     </BrowserRouter>
