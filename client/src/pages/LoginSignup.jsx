@@ -55,10 +55,12 @@ const LeftPane = ({ setLoadingState, onLogin, onPopupDismiss }) => {
   return (
     <div className="order-1 lg:-order-1 lg:p-12">
       <h2 className="text-xl font-medium mb-4 text-center lg:text-left md:text-3xl lg:text-4xl">
-        Welcome back
+        {action === 'signin' ? 'Welcome back' : 'Register now'}
       </h2>
       <p className="text-muted text-xs mb-10 text-center lg:text-left md:text-sm">
-        Welcome back! Please enter your details.
+        {action === 'signin'
+          ? 'Welcome back! Please enter your details.'
+          : 'Please enter your details below.'}
       </p>
 
       <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
