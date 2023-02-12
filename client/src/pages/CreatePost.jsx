@@ -12,7 +12,6 @@ const CreatePost = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    name: '',
     prompt: '',
     photo: ''
   });
@@ -26,7 +25,7 @@ const CreatePost = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!(form.prompt && form.name && form.photo)) return alert('Please fill the form first');
+    if (!(form.prompt && form.photo)) return alert('Please fill the form first');
     setLoading(true);
     try {
       await axios.post(`${serverURI}/api/v1/post/`, form, serverConfig);
@@ -75,15 +74,6 @@ const CreatePost = () => {
       {/* Form Section  */}
       <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-5">
-          <FormField
-            labelName="Your name"
-            type="text"
-            name="name"
-            placeholder="John Doe"
-            value={form.name}
-            handleChange={handleChange}
-          />
-
           <FormField
             labelName="Prompt"
             type="text"
