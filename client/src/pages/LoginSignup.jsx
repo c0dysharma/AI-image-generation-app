@@ -4,7 +4,6 @@ import axios from 'axios';
 import { RxCross2 } from 'react-icons/all';
 
 import { FormField, CheckBox, Loader } from '../components';
-import { google } from '../assets';
 import { serverURI } from '../constants';
 
 const LeftPane = ({ setLoadingState, onLogin, onPopupDismiss }) => {
@@ -49,9 +48,6 @@ const LeftPane = ({ setLoadingState, onLogin, onPopupDismiss }) => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    console.log('google');
-  };
   return (
     <div className="order-1 lg:-order-1 lg:p-12">
       <h2 className="text-xl font-medium mb-4 text-center lg:text-left md:text-3xl lg:text-4xl">
@@ -93,7 +89,7 @@ const LeftPane = ({ setLoadingState, onLogin, onPopupDismiss }) => {
           handleChange={handleChange}
         />
 
-        <div className="mb-5 flex justify-between">
+        <div className="flex justify-between">
           <CheckBox
             label="Remember for 30 days"
             name="rememberMe"
@@ -106,22 +102,13 @@ const LeftPane = ({ setLoadingState, onLogin, onPopupDismiss }) => {
             Forgot Password
           </Link>
         </div>
+
+        <button
+          type="submit"
+          className="font-medium block w-full rounded-lg bg-purple py-3 text-white mb-3 md:mb-3 lg:mb-5">
+          {action === 'signin' ? 'Sign in' : 'Sign up'}
+        </button>
       </form>
-
-      <button
-        type="submit"
-        onClick={handleSubmit}
-        className="font-medium block w-full rounded-lg bg-purple py-3 text-white mb-3 md:mb-3 lg:mb-5">
-        {action === 'signin' ? 'Sign in' : 'Sign up'}
-      </button>
-
-      <button
-        type="button"
-        onClick={handleGoogleLogin}
-        className="font-medium w-full rounded-lg bg-white py-3 border-2 mb-3 md:mb-3 lg:mb-5 flex items-center justify-center">
-        <img src={google} className="mr-3 w-6 h-6" alt="Google logo" />
-        Sign in with Google
-      </button>
 
       {action === 'signin' ? (
         <p className="text-muted text-center text-sm">
