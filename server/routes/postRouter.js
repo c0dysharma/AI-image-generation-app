@@ -15,7 +15,7 @@ router
   .route('/')
   .get(async (req, res) => {
     try {
-      const allPosts = await Post.find({});
+      const allPosts = await Post.find({}).select('name prompt photo -_id');
       res.status(200).json({ success: true, data: allPosts });
     } catch (error) {
       console.error(error);
@@ -24,9 +24,14 @@ router
   })
   .post(validateUser, async (req, res) => {
     try {
-      const { name, prompt, photo } = req.body;
+      const { prompt, photo } = req.body;
       const photoUrl = await cloudinary.uploader.upload(photo);
-      const newPost = await Post.create({ name, prompt, photo: photoUrl.url });
+      const newPost = await Post.create({
+        name: req.user.name,
+        prompt,
+        photo: photoUrl.url,
+        user_id: req.user._id,
+      });
 
       res.status(201).json({ success: true, data: newPost });
     } catch (error) {

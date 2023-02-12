@@ -13,6 +13,10 @@ const postSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  user_id: {
+    type: mongoose.Types.ObjectId,
+    required: true,
+  },
 });
 
 const Post = mongoose.model('Post', postSchema);
